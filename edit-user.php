@@ -28,6 +28,7 @@
 				// print_r($_POST);
 
 				$str_query = '';
+
 				foreach ($_POST as $key => $value) {
 					// neu khoa la submit thi bo qua
 					if($key == 'submit')
@@ -36,14 +37,15 @@
 					if($key == 'interesting') {
 						$value = implode(',', $value);
 					}
-					
 
 					$str_query .= $key . "='" . $value . "', ";
 				}
 
 				$sql = "UPDATE users SET $str_query";
-				die($sql);
-
+				$sql = substr($sql, 0, strlen($sql) - 2);
+				$sql = $sql . " WHERE id = {$id_user}";
+				// die($sql);
+				$con->exec($sql);
 
 				echo "<p><b>Cập nhật người dùng $name thành công</b></p>";
 			}
