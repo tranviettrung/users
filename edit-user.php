@@ -19,8 +19,35 @@
 		$id_user = $_GET['id'];
 
 		try {
+			
 			$con = new PDO("mysql:host={$servername};dbname={$dbname}", $username, $password);
 			$con->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
+
+			// Cap nhat thong tin nguoi dung khi nhan nut Sua nguoi dung
+			if(isset($_POST['submit'])){
+				// print_r($_POST);
+
+				$str_query = '';
+				foreach ($_POST as $key => $value) {
+					// neu khoa la submit thi bo qua
+					if($key == 'submit')
+						continue;
+					// new khoa la interesting thi can phai ghep mang
+					if($key == 'interesting') {
+						$value = implode(',', $value);
+					}
+					
+
+					$str_query .= $key . "='" . $value . "', ";
+				}
+
+				$sql = "UPDATE users SET $str_query";
+				die($sql);
+
+
+				echo "<p><b>Cập nhật người dùng $name thành công</b></p>";
+			}
+
 
 			$sql = "SELECT * FROM users WHERE id = $id_user";
 			
@@ -30,23 +57,14 @@
 			// Lay 1 ban ghi
 			$user = $stmt->fetch();
 
-			// print_r($user);
-
-
-			// echo "<p><b>Cập nhật người dùng $name thành công</b></p>";
-
 			$con = null;
-
-			// if(){
-			// 	$sql = "UPDATE";
-			// }
 		}
 		catch (PDOException $ex) {
 			echo $ex->getMessage();
 		}
 	?>
 	<h3>Thêm người dùng</h1>
-	<form method="POST" action="create-user.php">
+	<form method="POST" action="<?= $_SERVER['REQUEST_URI'] ?>">
 		<input type="text" name="name" placeholder="Tên của bạn" required="required" value="<?= $user['name'] ?>" /><br/>
 		
 		<input type="email" name="email" placeholder="Email" required="required" value="<?= $user['email'] ?>" /><br/>
